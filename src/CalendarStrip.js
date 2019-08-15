@@ -4,7 +4,7 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {polyfill} from 'react-lifecycles-compat';
+import { polyfill } from "react-lifecycles-compat";
 import { View, Animated, Easing } from "react-native";
 
 import moment from "moment";
@@ -59,7 +59,7 @@ class CalendarStrip extends Component {
     calendarHeaderContainerStyle: PropTypes.any,
     calendarHeaderStyle: PropTypes.any,
     calendarHeaderFormat: PropTypes.string,
-    calendarHeaderPosition: PropTypes.oneOf(['above', 'below']),
+    calendarHeaderPosition: PropTypes.oneOf(["above", "below"]),
 
     calendarAnimation: PropTypes.object,
     daySelectionAnimation: PropTypes.object,
@@ -90,7 +90,7 @@ class CalendarStrip extends Component {
     iconLeft: require("./img/left-arrow-black.png"),
     iconRight: require("./img/right-arrow-black.png"),
     calendarHeaderFormat: "MMMM YYYY",
-    calendarHeaderPosition: 'above',
+    calendarHeaderPosition: "above",
     datesWhitelist: undefined,
     datesBlacklist: undefined,
     disabledDateOpacity: 0.3,
@@ -100,7 +100,7 @@ class CalendarStrip extends Component {
     maxDayComponentSize: 80,
     minDayComponentSize: 10,
     shouldAllowFontScaling: true,
-    markedDates: [],
+    markedDates: []
   };
 
   constructor(props) {
@@ -181,7 +181,9 @@ class CalendarStrip extends Component {
       !this.compareDates(prevProps.startingDate, this.props.startingDate)
     ) {
       updateState = true;
-      startingDate = { startingDate: this.setLocale(moment(this.props.startingDate))};
+      startingDate = {
+        startingDate: this.setLocale(moment(this.props.startingDate))
+      };
       weekData = this.updateWeekData(
         startingDate.startingDate,
         this.state.selectedDate,
@@ -215,23 +217,23 @@ class CalendarStrip extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    // Extract selector icons since JSON.stringify fails on React component circular refs
-    let _nextProps = Object.assign({}, nextProps);
-    let _props = Object.assign({}, this.props);
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   // Extract selector icons since JSON.stringify fails on React component circular refs
+  //   let _nextProps = Object.assign({}, nextProps);
+  //   let _props = Object.assign({}, this.props);
 
-    delete _nextProps.leftSelector;
-    delete _nextProps.rightSelector;
-    delete _props.leftSelector;
-    delete _props.rightSelector;
+  //   delete _nextProps.leftSelector;
+  //   delete _nextProps.rightSelector;
+  //   delete _props.leftSelector;
+  //   delete _props.rightSelector;
 
-    return (
-      JSON.stringify(this.state) !== JSON.stringify(nextState) ||
-      JSON.stringify(_props) !== JSON.stringify(_nextProps) ||
-      this.props.leftSelector !== nextProps.leftSelector ||
-      this.props.rightSelector !== nextProps.rightSelector
-    );
-  }
+  //   return (
+  //     JSON.stringify(this.state) !== JSON.stringify(nextState) ||
+  //     JSON.stringify(_props) !== JSON.stringify(_nextProps) ||
+  //     this.props.leftSelector !== nextProps.leftSelector ||
+  //     this.props.rightSelector !== nextProps.rightSelector
+  //   );
+  // }
 
   // Check whether two datetimes are of the same value.  Supports Moment date,
   // JS date, or ISO 8601 strings.
@@ -425,15 +427,15 @@ class CalendarStrip extends Component {
   }
 
   getDateMarking(day) {
-    const { markedDates } = this.props
+    const { markedDates } = this.props;
     if (markedDates.length === 0) {
-      return false
+      return false;
     }
-    const date = markedDates.find(item => moment(day).isSame(item.date, 'day'))
+    const date = markedDates.find(item => moment(day).isSame(item.date, "day"));
     if (date && date.dots.length > 0) {
-      return date
+      return date;
     } else {
-      return false
+      return false;
     }
   }
 
@@ -541,7 +543,9 @@ class CalendarStrip extends Component {
   render() {
     let datesForWeek = this.state.datesForWeek;
     let datesRender = [];
-    let _CalendarDay = this.props.dayComponent ? this.props.dayComponent : CalendarDay;
+    let _CalendarDay = this.props.dayComponent
+      ? this.props.dayComponent
+      : CalendarDay;
     for (let i = 0; i < datesForWeek.length; i++) {
       let enabled = this.state.datesAllowedForWeek[i];
       let calendarDay = (
@@ -570,6 +574,10 @@ class CalendarStrip extends Component {
           size={this.state.dayComponentWidth}
           allowDayTextScaling={this.props.shouldAllowFontScaling}
           markedDates={this.props.markedDates}
+          excludedAppointmentIndexes={this.props.excludedAppointmentIndexes}
+          toggleDayDisabled={date => {
+            this.props.toggleDayDisabled(date);
+          }}
         />
       );
       datesRender.push(
@@ -613,7 +621,9 @@ class CalendarStrip extends Component {
           style={[this.props.innerStyle, { height: this.state.height }]}
           onLayout={this.onLayout.bind(this)}
         >
-          {this.props.showDate && this.props.calendarHeaderPosition === 'above' && calendarHeader}
+          {this.props.showDate &&
+            this.props.calendarHeaderPosition === "above" &&
+            calendarHeader}
 
           <View style={styles.datesStrip}>
             <WeekSelector
@@ -653,7 +663,9 @@ class CalendarStrip extends Component {
             />
           </View>
 
-          {this.props.showDate && this.props.calendarHeaderPosition === 'below' && calendarHeader}
+          {this.props.showDate &&
+            this.props.calendarHeaderPosition === "below" &&
+            calendarHeader}
         </View>
       </View>
     );
