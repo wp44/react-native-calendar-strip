@@ -2,7 +2,7 @@
  * Created by bogdanbegovic on 8/20/16.
  */
 
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { polyfill } from "react-lifecycles-compat";
 
@@ -10,7 +10,7 @@ import { Text, View, LayoutAnimation, TouchableOpacity } from "react-native";
 import styles from "./Calendar.style.js";
 import CheckBox from "./checkBox";
 
-class CalendarDay extends Component {
+class CalendarDay extends PureComponent {
   static propTypes = {
     date: PropTypes.object.isRequired,
     onDateSelected: PropTypes.func.isRequired,
@@ -69,14 +69,6 @@ class CalendarDay extends Component {
     };
   }
 
-  getDateSting = date =>
-    date
-      .set("hour", 0)
-      .set("minute", 0)
-      .set("second", 0)
-      .toDate()
-      .toString();
-
   componentDidUpdate(prevProps, prevState) {
     newState = {};
     let doStateUpdate = false;
@@ -134,6 +126,14 @@ class CalendarDay extends Component {
     };
   }
 
+  getDateSting = date =>
+    date
+      .set("hour", 0)
+      .set("minute", 0)
+      .set("second", 0)
+      .toDate()
+      .toString();
+
   renderDots() {
     if (!this.props.markedDates || this.props.markedDates.length === 0) {
       return;
@@ -175,13 +175,10 @@ class CalendarDay extends Component {
   }
 
   checkIfDayDisabled = () => {
-    const excludedForThisDay = this.props.excludedAppointmentIndexes.find(
-      obj => {
-        return obj.date.toString() == this.getDateSting(this.props.date);
-      }
-    );
-
-    if (excludedForThisDay && excludedForThisDay.excludedIndexes.includes(-1))
+    if (
+      this.props.excludedForThisDay &&
+      this.props.excludedForThisDay.excludedIndexes.includes(-1)
+    )
       return true;
     return false;
   };

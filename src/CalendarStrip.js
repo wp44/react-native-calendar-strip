@@ -217,23 +217,32 @@ class CalendarStrip extends Component {
     }
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   // Extract selector icons since JSON.stringify fails on React component circular refs
-  //   let _nextProps = Object.assign({}, nextProps);
-  //   let _props = Object.assign({}, this.props);
-
-  //   delete _nextProps.leftSelector;
-  //   delete _nextProps.rightSelector;
-  //   delete _props.leftSelector;
-  //   delete _props.rightSelector;
-
-  //   return (
-  //     JSON.stringify(this.state) !== JSON.stringify(nextState) ||
-  //     JSON.stringify(_props) !== JSON.stringify(_nextProps) ||
-  //     this.props.leftSelector !== nextProps.leftSelector ||
-  //     this.props.rightSelector !== nextProps.rightSelector
-  //   );
+  // shouldComponentUpdate(prevProps) {
+  //   if (
+  //     JSON.stringify(prevProps.excludedForThisDay) ===
+  //     JSON.stringify(this.props.excludedForThisDay)
+  //   )
+  //     return false;
+  //   return true;
   // }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    // Extract selector icons since JSON.stringify fails on React component circular refs
+    let _nextProps = Object.assign({}, nextProps);
+    let _props = Object.assign({}, this.props);
+
+    delete _nextProps.leftSelector;
+    delete _nextProps.rightSelector;
+    delete _props.leftSelector;
+    delete _props.rightSelector;
+
+    return (
+      JSON.stringify(this.state) !== JSON.stringify(nextState) ||
+      JSON.stringify(_props) !== JSON.stringify(_nextProps) ||
+      this.props.leftSelector !== nextProps.leftSelector ||
+      this.props.rightSelector !== nextProps.rightSelector
+    );
+  }
 
   // Check whether two datetimes are of the same value.  Supports Moment date,
   // JS date, or ISO 8601 strings.
@@ -540,6 +549,14 @@ class CalendarStrip extends Component {
     });
   }
 
+  getDateSting = date =>
+    date
+      .set("hour", 0)
+      .set("minute", 0)
+      .set("second", 0)
+      .toDate()
+      .toString();
+
   render() {
     let datesForWeek = this.state.datesForWeek;
     let datesRender = [];
@@ -574,9 +591,14 @@ class CalendarStrip extends Component {
           size={this.state.dayComponentWidth}
           allowDayTextScaling={this.props.shouldAllowFontScaling}
           markedDates={this.props.markedDates}
-          excludedAppointmentIndexes={this.props.excludedAppointmentIndexes}
+          excludedForThisDay={this.props.excludedAppointmentIndexes.find(
+            obj => {
+              return obj.date.toString() == this.getDateSting(datesForWeek[i]);
+            }
+          )}
           toggleDayDisabled={date => {
             this.props.toggleDayDisabled(date);
+            this.forceUpdate();
           }}
         />
       );
